@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity ,Image} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity ,Image, ToastAndroid, KeyboardAvoidingView} from 'react-native';
 import * as Permisssions from 'expo-permissions';
 import {BarCodeScanner} from 'expo-barcode-scanner';
 import { TextInput } from 'react-native-gesture-handler';
@@ -42,9 +42,59 @@ export default class Transaction extends React.Component{
      }
     }
     handleTransaction=()=>{
+        var transMessage=""
         db.collection("books").doc(this.state.scanBookID).get()
         .then(doc=>{
-            console.log(doc.data())
+            var book=doc.data();
+            if(book.bkAvailability){
+                console.log("inside if")
+                this.initiateBookIssue();
+                transMessage="Book Issued"
+                ToastAndroid.show(transMessage, ToastAndroid.SHORT);
+            }else{
+                console.log("inside else")
+                this.initiateBookReturn();
+                transMessage="Book Returned"
+                ToastAndroid.show(transMessage, ToastAndroid.SHORT);
+            }
+        })
+    }
+    initiateBookIssue=async()=>{
+        console.log("inside issue")
+        db.collection("transactions").add({
+            studentID:this.state.scanStudentID,
+            bookID:this.state.scanBookID,
+            date:firebase.firestore.Timestamp.now.toDate(),
+            transactionType:"Issue"
+        })
+        db.collection("books").doc(this.state.scanBookID).update({
+            bkAvailability:false
+        })
+        db.collection("students").doc(this.state.scanStudentID).update({
+            numberOfBooksIssued:firebase.firestore.FieldValue.increment(1)
+        })
+        this.setState({
+            scanBookID:"",
+            scanStudentID:""
+        })
+    }
+    initiateBookReturn=async()=>{
+        console.log("inside return")
+        db.collection("transactions").add({
+            studentID:this.state.scanStudentID,
+            bookID:this.state.scanBookID,
+            date:firebase.firestore.Timestamp.now.toDate(),
+            transactionType:"Return"
+        })
+        db.collection("books").doc(this.state.scanBookID).update({
+            bkAvailability:true
+        })
+        db.collection("students").doc(this.state.scanStudentID).update({
+            numberOfBooksIssued:firebase.firestore.FieldValue.increment(-1)
+        })
+        this.setState({
+            scanBookID:"",
+            scanStudentID:""
         })
     }
     render(){
@@ -66,7 +116,8 @@ export default class Transaction extends React.Component{
             </View>
         )*/
         return(
-            <View style={styles.container}>
+            
+            <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
                 <Image source={require("../assets/booklogo.jpg")} style={{width:200, height:200}}></Image>
                 <Text style={{textAlign:'center', fontSize:32}}> WILY </Text>
                 <View style={styles.inputView}>
@@ -88,7 +139,7 @@ export default class Transaction extends React.Component{
                 <TouchableOpacity style={styles.submitButton} onPress={async()=>this.handleTransaction()}>
                     <Text style={styles.sbuttonText}> Submit</Text>
                 </TouchableOpacity>
-            </View>
+            </KeyboardAvoidingView>
         )
         }
     }

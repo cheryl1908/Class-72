@@ -1,12 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, YellowBox, LogBox } from 'react-native';
 import Transaction from './screens/transaction';
 import Search from './screens/search';
 import {createAppContainer} from 'react-navigation';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 
+
 export default class App extends React.Component{
+
   render(){
+    console.disableYellowBox=true;
     return (
       <AppContainer/>
     )

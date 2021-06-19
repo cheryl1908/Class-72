@@ -12,7 +12,7 @@
     "expo-barcode-scanner": "~8.2.1",
     "expo-permissions": "~9.0.1",
     "expo-status-bar": "^1.0.0",
-    "firebase": "^8.2.2",
+    "firebase": "^7.9.0",
     "react": "16.11.0",
     "react-dom": "16.11.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-38.0.2.tar.gz",
@@ -21,7 +21,8 @@
     "react-native-screens": "~2.9.0",
     "react-native-web": "~0.11.7",
     "react-navigation": "^4.4.4",
-    "react-navigation-tabs": "^2.11.1"
+    "react-navigation-tabs": "^2.11.1",
+    "sharp-cli": "^1.15.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0"
